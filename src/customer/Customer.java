@@ -8,7 +8,7 @@ import customer.value.Hash;
 
 import java.util.List;
 
-public class Customer {
+public final class Customer {
     private Hash confirmationHash;
     private boolean isEmailAddressConfirmed;
 

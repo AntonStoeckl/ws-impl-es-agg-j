@@ -4,7 +4,7 @@ import customer.value.EmailAddress;
 import customer.value.Hash;
 import customer.value.ID;
 
-public class ChangeCustomerEmailAddress {
+public final class ChangeCustomerEmailAddress {
     public final ID customerID;
     public final EmailAddress emailAddress;
     public final Hash confirmationHash;

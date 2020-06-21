@@ -1,6 +1,6 @@
 package customer.value;
 
-public class EmailAddress {
+public final class EmailAddress {
     private final String value;
 
     private EmailAddress(String value) {

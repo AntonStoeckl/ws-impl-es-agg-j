@@ -5,7 +5,7 @@ import customer.value.Hash;
 import customer.value.ID;
 import customer.value.PersonName;
 
-public class RegisterCustomer {
+public final class RegisterCustomer {
     private final ID id;
     private final EmailAddress emailAddress;
     private final Hash confirmationHash;

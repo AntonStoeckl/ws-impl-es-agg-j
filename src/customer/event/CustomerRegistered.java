@@ -5,7 +5,7 @@ import customer.value.Hash;
 import customer.value.ID;
 import customer.value.PersonName;
 
-public class CustomerRegistered implements Event {
+public final class CustomerRegistered implements Event {
     private final ID customerID;
     private final EmailAddress emailAddress;
     private final Hash confirmationHash;

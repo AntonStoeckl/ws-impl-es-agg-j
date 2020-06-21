@@ -3,7 +3,7 @@ package customer.command;
 import customer.value.Hash;
 import customer.value.ID;
 
-public class ConfirmCustomerEmailAddress {
+public final class ConfirmCustomerEmailAddress {
     public final ID customerID;
     public final Hash confirmationHash;
 

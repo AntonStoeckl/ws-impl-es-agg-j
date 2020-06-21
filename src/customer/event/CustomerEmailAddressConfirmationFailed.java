@@ -2,7 +2,7 @@ package customer.event;
 
 import customer.value.ID;
 
-public class CustomerEmailAddressConfirmationFailed implements Event {
+public final class CustomerEmailAddressConfirmationFailed implements Event {
     private final ID customerID;
 
     private CustomerEmailAddressConfirmationFailed(ID customerID) {

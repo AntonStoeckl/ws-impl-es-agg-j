@@ -2,7 +2,7 @@ package customer.value;
 
 import java.util.UUID;
 
-public class ID {
+public final class ID {
     private final String value;
 
     private ID(String value) {

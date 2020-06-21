@@ -2,7 +2,7 @@ package customer.value;
 
 import java.util.UUID;
 
-public class Hash {
+public final class Hash {
     private final String value;
 
     private Hash(String value) {

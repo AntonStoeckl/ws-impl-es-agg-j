@@ -1,6 +1,6 @@
 package customer.value;
 
-public class PersonName {
+public final class PersonName {
     private final String givenName;
     private final String familyName;
 
