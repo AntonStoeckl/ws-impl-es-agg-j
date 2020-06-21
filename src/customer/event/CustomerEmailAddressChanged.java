@@ -26,4 +26,8 @@ public final class CustomerEmailAddressChanged implements Event {
     public EmailAddress emailAddress() {
         return emailAddress;
     }
+
+    public Hash confirmationHash() {
+        return confirmationHash;
+    }
 }
