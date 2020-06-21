@@ -48,7 +48,7 @@ public final class Customer {
         return List.of(CustomerEmailAddressConfirmed.build(command.customerID()));
     }
 
-    public List<Event> ChangeEmailAddress(ChangeCustomerEmailAddress command) {
+    public List<Event> changeEmailAddress(ChangeCustomerEmailAddress command) {
         if (command.emailAddress().equals(emailAddress)) {
             return List.of();
         }

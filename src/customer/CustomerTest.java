@@ -160,7 +160,7 @@ class CustomerTest {
 
         // When ChangeCustomerEmailAddress
         var changeCustomerEmailAddress = new ChangeCustomerEmailAddress(customerID, changedEmailAddress, changedConfirmationHash);
-        var recordedEvents = customer.ChangeEmailAddress(changeCustomerEmailAddress);
+        var recordedEvents = customer.changeEmailAddress(changeCustomerEmailAddress);
 
         // Then CustomerEmailAddressChanged
         assertEquals(1, recordedEvents.size());
@@ -189,7 +189,7 @@ class CustomerTest {
 
         // When ChangeCustomerEmailAddress
         var changeCustomerEmailAddress = new ChangeCustomerEmailAddress(customerID, emailAddress, confirmationHash);
-        var recordedEvents = customer.ChangeEmailAddress(changeCustomerEmailAddress);
+        var recordedEvents = customer.changeEmailAddress(changeCustomerEmailAddress);
 
         // Then no event
         assertEquals(0, recordedEvents.size());
@@ -214,7 +214,7 @@ class CustomerTest {
 
         // When ChangeCustomerEmailAddress
         var changeCustomerEmailAddress = new ChangeCustomerEmailAddress(customerID, changedEmailAddress, changedConfirmationHash);
-        var recordedEvents = customer.ChangeEmailAddress(changeCustomerEmailAddress);
+        var recordedEvents = customer.changeEmailAddress(changeCustomerEmailAddress);
 
         // Then no event
         assertEquals(0, recordedEvents.size());
