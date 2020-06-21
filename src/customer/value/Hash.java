@@ -14,6 +14,6 @@ public final class Hash {
     }
 
     public boolean equals(Hash other) {
-        return this.value == other.value;
+        return this.value.equals(other.value);
     }
 }

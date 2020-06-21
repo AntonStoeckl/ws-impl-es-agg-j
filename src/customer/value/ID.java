@@ -14,6 +14,6 @@ public final class ID {
     }
 
     public boolean equals(ID other) {
-        return this.value == other.value;
+        return this.value.equals(other.value);
     }
 }

@@ -12,6 +12,6 @@ public final class EmailAddress {
     }
 
     public boolean equals(EmailAddress other) {
-        return value == other.value;
+        return value.equals(other.value);
     }
 }
