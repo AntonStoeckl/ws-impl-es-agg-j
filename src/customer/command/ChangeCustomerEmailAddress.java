@@ -9,10 +9,14 @@ public final class ChangeCustomerEmailAddress {
     public final EmailAddress emailAddress;
     public final Hash confirmationHash;
 
-    public ChangeCustomerEmailAddress(ID customerID, EmailAddress emailAddress, Hash confirmationHash) {
+    private ChangeCustomerEmailAddress(ID customerID, EmailAddress emailAddress, Hash confirmationHash) {
         this.customerID = customerID;
         this.emailAddress = emailAddress;
         this.confirmationHash = confirmationHash;
+    }
+
+    public static ChangeCustomerEmailAddress build(ID customerID, EmailAddress emailAddress, Hash confirmationHash) {
+        return new ChangeCustomerEmailAddress(customerID, emailAddress, confirmationHash);
     }
 
     public ID customerID() {

@@ -20,7 +20,7 @@ class CustomerTest {
     @Test
     public void RegisterCustomer() {
         // When RegisterCustomer
-        var registerCustomer = new RegisterCustomer("john@doe.com", "John", "Doe");
+        var registerCustomer = RegisterCustomer.build("john@doe.com", "John", "Doe");
         var customerRegistered = Customer.register(registerCustomer);
 
         // Then CustomerRegistered
@@ -48,7 +48,7 @@ class CustomerTest {
         );
 
         // When ConfirmCustomerEmailAddress
-        var confirmCustomerEmailAddress = new ConfirmCustomerEmailAddress(customerID, confirmationHash);
+        var confirmCustomerEmailAddress = ConfirmCustomerEmailAddress.build(customerID, confirmationHash);
         var recordedEvents = customer.confirmEmailAddress(confirmCustomerEmailAddress);
 
         // Then CustomerEmailAddressConfirmed
@@ -76,7 +76,7 @@ class CustomerTest {
 
         // When ConfirmCustomerEmailAddress (with wrong confirmationHash)
         var wrongConfirmationHash = Hash.generate();
-        var confirmCustomerEmailAddress = new ConfirmCustomerEmailAddress(customerID, wrongConfirmationHash);
+        var confirmCustomerEmailAddress = ConfirmCustomerEmailAddress.build(customerID, wrongConfirmationHash);
         var recordedEvents = customer.confirmEmailAddress(confirmCustomerEmailAddress);
 
         // Then CustomerEmailAddressConfirmationFailed
@@ -105,7 +105,7 @@ class CustomerTest {
         );
 
         // When ConfirmCustomerEmailAddress
-        var confirmCustomerEmailAddress = new ConfirmCustomerEmailAddress(customerID, confirmationHash);
+        var confirmCustomerEmailAddress = ConfirmCustomerEmailAddress.build(customerID, confirmationHash);
         var recordedEvents = customer.confirmEmailAddress(confirmCustomerEmailAddress);
 
         // Then no event
@@ -130,7 +130,7 @@ class CustomerTest {
 
         // When ConfirmCustomerEmailAddress (with wrong confirmationHash)
         var wrongConfirmationHash = Hash.generate();
-        var confirmCustomerEmailAddress = new ConfirmCustomerEmailAddress(customerID, wrongConfirmationHash);
+        var confirmCustomerEmailAddress = ConfirmCustomerEmailAddress.build(customerID, wrongConfirmationHash);
         var recordedEvents = customer.confirmEmailAddress(confirmCustomerEmailAddress);
 
         // Then CustomerEmailAddressConfirmationFailed
@@ -159,7 +159,7 @@ class CustomerTest {
         );
 
         // When ChangeCustomerEmailAddress
-        var changeCustomerEmailAddress = new ChangeCustomerEmailAddress(customerID, changedEmailAddress, changedConfirmationHash);
+        var changeCustomerEmailAddress = ChangeCustomerEmailAddress.build(customerID, changedEmailAddress, changedConfirmationHash);
         var recordedEvents = customer.changeEmailAddress(changeCustomerEmailAddress);
 
         // Then CustomerEmailAddressChanged
@@ -188,7 +188,7 @@ class CustomerTest {
         );
 
         // When ChangeCustomerEmailAddress
-        var changeCustomerEmailAddress = new ChangeCustomerEmailAddress(customerID, emailAddress, confirmationHash);
+        var changeCustomerEmailAddress = ChangeCustomerEmailAddress.build(customerID, emailAddress, confirmationHash);
         var recordedEvents = customer.changeEmailAddress(changeCustomerEmailAddress);
 
         // Then no event
@@ -213,7 +213,7 @@ class CustomerTest {
         );
 
         // When ChangeCustomerEmailAddress
-        var changeCustomerEmailAddress = new ChangeCustomerEmailAddress(customerID, changedEmailAddress, changedConfirmationHash);
+        var changeCustomerEmailAddress = ChangeCustomerEmailAddress.build(customerID, changedEmailAddress, changedConfirmationHash);
         var recordedEvents = customer.changeEmailAddress(changeCustomerEmailAddress);
 
         // Then no event
@@ -239,7 +239,7 @@ class CustomerTest {
         );
 
         // When ConfirmCustomerEmailAddress
-        var confirmCustomerEmailAddress = new ConfirmCustomerEmailAddress(customerID, changedConfirmationHash);
+        var confirmCustomerEmailAddress = ConfirmCustomerEmailAddress.build(customerID, changedConfirmationHash);
         var recordedEvents = customer.confirmEmailAddress(confirmCustomerEmailAddress);
 
         // Then CustomerEmailAddressConfirmed

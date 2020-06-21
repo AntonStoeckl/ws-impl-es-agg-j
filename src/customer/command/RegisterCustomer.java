@@ -11,11 +11,15 @@ public final class RegisterCustomer {
     private final Hash confirmationHash;
     private final PersonName name;
 
-    public RegisterCustomer(String emailAddress, String givenName, String familyName) {
+    private RegisterCustomer(String emailAddress, String givenName, String familyName) {
         this.id = ID.generate();
         this.confirmationHash = Hash.generate();
         this.emailAddress = EmailAddress.build(emailAddress);
         this.name = PersonName.build(givenName, familyName);
+    }
+
+    public static RegisterCustomer build(String emailAddress, String givenName, String familyName) {
+        return new RegisterCustomer(emailAddress, givenName, familyName);
     }
 
     public ID id() {
