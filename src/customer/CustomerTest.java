@@ -160,11 +160,90 @@ class CustomerTest {
 
         // When ChangeCustomerEmailAddress
         var changeCustomerEmailAddress = new ChangeCustomerEmailAddress(customerID, changedEmailAddress, changedConfirmationHash);
-        var customerEmailAddressChanged = customer.ChangeEmailAddress(changeCustomerEmailAddress);
+        var recordedEvents = customer.ChangeEmailAddress(changeCustomerEmailAddress);
 
         // Then CustomerEmailAddressChanged
-        assertEquals(CustomerEmailAddressChanged.class, customerEmailAddressChanged.getClass());
+        assertEquals(1, recordedEvents.size());
+        assertEquals(CustomerEmailAddressChanged.class, recordedEvents.get(0).getClass());
 
         //  and the payload should be as expected
+        var customerEmailAddressChanged = (CustomerEmailAddressChanged) recordedEvents.get(0);
+        assertTrue(customerID.equals(customerEmailAddressChanged.customerID()));
+        assertTrue(changedEmailAddress.equals(customerEmailAddressChanged.emailAddress()));
+        assertTrue(changedConfirmationHash.equals(customerEmailAddressChanged.confirmationHash()));
+    }
+
+    @Test
+    public void ChangeCustomerEmailAddress_withUnchangedEmailAddress() {
+        var customerID = ID.generate();
+        var emailAddress = EmailAddress.build("john@doe.com");
+        var confirmationHash = Hash.generate();
+        var name = PersonName.build("John", "Doe");
+
+        // Given CustomerRegistered
+        var customer = Customer.reconstitute(
+                List.of(
+                        CustomerRegistered.build(customerID, emailAddress, confirmationHash, name)
+                )
+        );
+
+        // When ChangeCustomerEmailAddress
+        var changeCustomerEmailAddress = new ChangeCustomerEmailAddress(customerID, emailAddress, confirmationHash);
+        var recordedEvents = customer.ChangeEmailAddress(changeCustomerEmailAddress);
+
+        // Then no event
+        assertEquals(0, recordedEvents.size());
+    }
+
+    @Test
+    public void ChangeCustomerEmailAddress_whenItWasAlreadyChanged() {
+        var customerID = ID.generate();
+        var emailAddress = EmailAddress.build("john@doe.com");
+        var confirmationHash = Hash.generate();
+        var name = PersonName.build("John", "Doe");
+        var changedEmailAddress = EmailAddress.build("john+changed@doe.com");
+        var changedConfirmationHash = Hash.generate();
+
+        // Given CustomerRegistered
+        var customer = Customer.reconstitute(
+                List.of(
+                        CustomerRegistered.build(customerID, emailAddress, confirmationHash, name),
+                        CustomerEmailAddressChanged.build(customerID, changedEmailAddress, changedConfirmationHash)
+                )
+        );
+
+        // When ChangeCustomerEmailAddress
+        var changeCustomerEmailAddress = new ChangeCustomerEmailAddress(customerID, changedEmailAddress, changedConfirmationHash);
+        var recordedEvents = customer.ChangeEmailAddress(changeCustomerEmailAddress);
+
+        // Then no event
+        assertEquals(0, recordedEvents.size());
+    }
+
+    @Test
+    public void ConfirmCustomerEmailAddress_whenItWasChanged() {
+        var customerID = ID.generate();
+        var emailAddress = EmailAddress.build("john@doe.com");
+        var confirmationHash = Hash.generate();
+        var name = PersonName.build("John", "Doe");
+        var changedEmailAddress = EmailAddress.build("john+changed@doe.com");
+        var changedConfirmationHash = Hash.generate();
+
+        // Given CustomerRegistered
+        var customer = Customer.reconstitute(
+                List.of(
+                        CustomerRegistered.build(customerID, emailAddress, confirmationHash, name),
+                        CustomerEmailAddressConfirmed.build(customerID),
+                        CustomerEmailAddressChanged.build(customerID, changedEmailAddress, changedConfirmationHash)
+                )
+        );
+
+        // When ConfirmCustomerEmailAddress
+        var confirmCustomerEmailAddress = new ConfirmCustomerEmailAddress(customerID, changedConfirmationHash);
+        var recordedEvents = customer.confirmEmailAddress(confirmCustomerEmailAddress);
+
+        // Then CustomerEmailAddressConfirmed
+        assertEquals(1, recordedEvents.size());
+        assertEquals(CustomerEmailAddressConfirmed.class, recordedEvents.get(0).getClass());
     }
 }

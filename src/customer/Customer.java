@@ -4,11 +4,13 @@ import customer.command.ChangeCustomerEmailAddress;
 import customer.command.ConfirmCustomerEmailAddress;
 import customer.command.RegisterCustomer;
 import customer.event.*;
+import customer.value.EmailAddress;
 import customer.value.Hash;
 
 import java.util.List;
 
 public final class Customer {
+    private EmailAddress emailAddress;
     private Hash confirmationHash;
     private boolean isEmailAddressConfirmed;
 
@@ -46,15 +48,28 @@ public final class Customer {
         return List.of(CustomerEmailAddressConfirmed.build(command.customerID()));
     }
 
-    public CustomerEmailAddressChanged ChangeEmailAddress(ChangeCustomerEmailAddress command) {
-        return CustomerEmailAddressChanged.build(command.customerID(), command.emailAddress(), command.confirmationHash());
+    public List<Event> ChangeEmailAddress(ChangeCustomerEmailAddress command) {
+        if (command.emailAddress().equals(emailAddress)) {
+            return List.of();
+        }
+
+        return List.of(
+                CustomerEmailAddressChanged.build(
+                        command.customerID(), command.emailAddress(), command.confirmationHash()
+                )
+        );
     }
 
     private void apply(Event event) {
         if (event.getClass() == CustomerRegistered.class) {
+            emailAddress = ((CustomerRegistered) event).emailAddress();
             confirmationHash = ((CustomerRegistered) event).confirmationHash();
         } else if (event.getClass() == CustomerEmailAddressConfirmed.class) {
             isEmailAddressConfirmed = true;
+        } else if (event.getClass() == CustomerEmailAddressChanged.class) {
+            emailAddress = ((CustomerEmailAddressChanged) event).emailAddress();
+            confirmationHash = ((CustomerEmailAddressChanged) event).confirmationHash();
+            isEmailAddressConfirmed = false;
         }
     }
 }
