@@ -19,8 +19,4 @@ public final class ConfirmCustomerEmailAddress {
     public ID customerID() {
         return customerID;
     }
-
-    public Hash confirmationHash() {
-        return confirmationHash;
-    }
 }
