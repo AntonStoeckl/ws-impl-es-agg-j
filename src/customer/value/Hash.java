@@ -3,7 +3,7 @@ package customer.value;
 import java.util.UUID;
 
 public final class Hash {
-    private final String value;
+    public final String value;
 
     private Hash(String value) {
         this.value = value;

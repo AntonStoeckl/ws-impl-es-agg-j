@@ -5,9 +5,9 @@ import customer.value.Hash;
 import customer.value.ID;
 
 public final class CustomerEmailAddressChanged implements Event {
-    private final ID customerID;
-    private final EmailAddress emailAddress;
-    private final Hash confirmationHash;
+    public final ID customerID;
+    public final EmailAddress emailAddress;
+    public final Hash confirmationHash;
 
     private CustomerEmailAddressChanged(ID customerID, EmailAddress emailAddress, Hash confirmationHash) {
         this.customerID = customerID;
@@ -17,17 +17,5 @@ public final class CustomerEmailAddressChanged implements Event {
 
     public static CustomerEmailAddressChanged build(ID customerID, EmailAddress emailAddress, Hash confirmationHash) {
         return new CustomerEmailAddressChanged(customerID, emailAddress, confirmationHash);
-    }
-
-    public ID customerID() {
-        return customerID;
-    }
-
-    public EmailAddress emailAddress() {
-        return emailAddress;
-    }
-
-    public Hash confirmationHash() {
-        return confirmationHash;
     }
 }

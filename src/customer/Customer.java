@@ -19,10 +19,10 @@ public final class Customer {
 
     public static CustomerRegistered register(RegisterCustomer command) {
         return CustomerRegistered.build(
-                command.id(),
-                command.emailAddress(),
-                command.confirmationHash(),
-                command.name()
+                command.id,
+                command.emailAddress,
+                command.confirmationHash,
+                command.name
         );
     }
 
@@ -38,37 +38,37 @@ public final class Customer {
 
     public List<Event> confirmEmailAddress(ConfirmCustomerEmailAddress command) {
         if (!confirmationHash.equals(command.confirmationHash)) {
-            return List.of(CustomerEmailAddressConfirmationFailed.build(command.customerID()));
+            return List.of(CustomerEmailAddressConfirmationFailed.build(command.customerID));
         }
 
         if (isEmailAddressConfirmed) {
             return List.of();
         }
 
-        return List.of(CustomerEmailAddressConfirmed.build(command.customerID()));
+        return List.of(CustomerEmailAddressConfirmed.build(command.customerID));
     }
 
     public List<Event> changeEmailAddress(ChangeCustomerEmailAddress command) {
-        if (command.emailAddress().equals(emailAddress)) {
+        if (command.emailAddress.equals(emailAddress)) {
             return List.of();
         }
 
         return List.of(
                 CustomerEmailAddressChanged.build(
-                        command.customerID(), command.emailAddress(), command.confirmationHash()
+                        command.customerID, command.emailAddress, command.confirmationHash
                 )
         );
     }
 
     private void apply(Event event) {
         if (event.getClass() == CustomerRegistered.class) {
-            emailAddress = ((CustomerRegistered) event).emailAddress();
-            confirmationHash = ((CustomerRegistered) event).confirmationHash();
+            emailAddress = ((CustomerRegistered) event).emailAddress;
+            confirmationHash = ((CustomerRegistered) event).confirmationHash;
         } else if (event.getClass() == CustomerEmailAddressConfirmed.class) {
             isEmailAddressConfirmed = true;
         } else if (event.getClass() == CustomerEmailAddressChanged.class) {
-            emailAddress = ((CustomerEmailAddressChanged) event).emailAddress();
-            confirmationHash = ((CustomerEmailAddressChanged) event).confirmationHash();
+            emailAddress = ((CustomerEmailAddressChanged) event).emailAddress;
+            confirmationHash = ((CustomerEmailAddressChanged) event).confirmationHash;
             isEmailAddressConfirmed = false;
         }
     }

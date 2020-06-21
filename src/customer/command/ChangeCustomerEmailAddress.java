@@ -18,16 +18,4 @@ public final class ChangeCustomerEmailAddress {
     public static ChangeCustomerEmailAddress build(ID customerID, EmailAddress emailAddress, Hash confirmationHash) {
         return new ChangeCustomerEmailAddress(customerID, emailAddress, confirmationHash);
     }
-
-    public ID customerID() {
-        return customerID;
-    }
-
-    public EmailAddress emailAddress() {
-        return emailAddress;
-    }
-
-    public Hash confirmationHash() {
-        return confirmationHash;
-    }
 }

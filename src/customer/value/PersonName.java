@@ -1,8 +1,8 @@
 package customer.value;
 
 public final class PersonName {
-    private final String givenName;
-    private final String familyName;
+    public final String givenName;
+    public final String familyName;
 
     private PersonName(String givenName, String familyName) {
         this.givenName = givenName;

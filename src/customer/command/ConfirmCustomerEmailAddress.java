@@ -15,8 +15,4 @@ public final class ConfirmCustomerEmailAddress {
     public static ConfirmCustomerEmailAddress build(ID customerID, Hash confirmationHash) {
         return new ConfirmCustomerEmailAddress(customerID, confirmationHash);
     }
-
-    public ID customerID() {
-        return customerID;
-    }
 }

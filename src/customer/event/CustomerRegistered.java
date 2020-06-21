@@ -6,10 +6,10 @@ import customer.value.ID;
 import customer.value.PersonName;
 
 public final class CustomerRegistered implements Event {
-    private final ID customerID;
-    private final EmailAddress emailAddress;
-    private final Hash confirmationHash;
-    private final PersonName name;
+    public final ID customerID;
+    public final EmailAddress emailAddress;
+    public final Hash confirmationHash;
+    public final PersonName name;
 
     private CustomerRegistered(ID customerID, EmailAddress emailAddress, Hash confirmationHash, PersonName name) {
         this.customerID = customerID;
@@ -25,21 +25,5 @@ public final class CustomerRegistered implements Event {
             PersonName name
     ) {
         return new CustomerRegistered(id, emailAddress, confirmationHash, name);
-    }
-
-    public ID customerID() {
-        return customerID;
-    }
-
-    public EmailAddress emailAddress() {
-        return emailAddress;
-    }
-
-    public Hash confirmationHash() {
-        return confirmationHash;
-    }
-
-    public PersonName name() {
-        return name;
     }
 }

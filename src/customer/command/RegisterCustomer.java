@@ -6,10 +6,10 @@ import customer.value.ID;
 import customer.value.PersonName;
 
 public final class RegisterCustomer {
-    private final ID id;
-    private final EmailAddress emailAddress;
-    private final Hash confirmationHash;
-    private final PersonName name;
+    public final ID id;
+    public final EmailAddress emailAddress;
+    public final Hash confirmationHash;
+    public final PersonName name;
 
     private RegisterCustomer(String emailAddress, String givenName, String familyName) {
         this.id = ID.generate();
@@ -20,21 +20,5 @@ public final class RegisterCustomer {
 
     public static RegisterCustomer build(String emailAddress, String givenName, String familyName) {
         return new RegisterCustomer(emailAddress, givenName, familyName);
-    }
-
-    public ID id() {
-        return id;
-    }
-
-    public EmailAddress emailAddress() {
-        return emailAddress;
-    }
-
-    public Hash confirmationHash() {
-        return confirmationHash;
-    }
-
-    public PersonName name() {
-        return name;
     }
 }

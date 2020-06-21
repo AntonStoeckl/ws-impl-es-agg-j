@@ -3,7 +3,7 @@ package customer.value;
 import java.util.UUID;
 
 public final class ID {
-    private final String value;
+    public final String value;
 
     private ID(String value) {
         this.value = value;
