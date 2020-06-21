@@ -23,7 +23,7 @@ public final class CustomerEmailAddressChanged implements Event {
         return customerID;
     }
 
-    public EmailAddress getEmailAddress() {
+    public EmailAddress emailAddress() {
         return emailAddress;
     }
 }
