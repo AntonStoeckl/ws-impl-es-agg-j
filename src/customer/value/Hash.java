@@ -13,6 +13,10 @@ public final class Hash {
         return new Hash(UUID.randomUUID().toString());
     }
 
+    public static Hash build(String hash) {
+        return new Hash(hash);
+    }
+
     public boolean equals(Hash other) {
         return this.value.equals(other.value);
     }

@@ -3,101 +3,104 @@ package customer;
 import customer.command.ChangeCustomerEmailAddress;
 import customer.command.ConfirmCustomerEmailAddress;
 import customer.command.RegisterCustomer;
-import customer.event.CustomerEmailAddressChanged;
-import customer.event.CustomerEmailAddressConfirmationFailed;
-import customer.event.CustomerEmailAddressConfirmed;
-import customer.event.CustomerRegistered;
+import customer.event.*;
 import customer.value.EmailAddress;
 import customer.value.Hash;
 import customer.value.ID;
 import customer.value.PersonName;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class CustomerTest {
+    private ID customerID;
+    private EmailAddress emailAddress;
+    private EmailAddress changedEmailAddress;
+    private Hash confirmationHash;
+    private Hash wrongConfirmationHash;
+    private Hash changedConfirmationHash;
+    private PersonName name;
+
+    @BeforeEach
+    public void beforeEach() {
+        customerID = ID.generate();
+        emailAddress = EmailAddress.build("john@doe.com");
+        changedEmailAddress = EmailAddress.build("john+changed@doe.com");
+        confirmationHash = Hash.generate();
+        wrongConfirmationHash = Hash.generate();
+        changedConfirmationHash = Hash.generate();
+        name = PersonName.build("John", "Doe");
+    }
+
     @Test
     public void RegisterCustomer() {
         // When RegisterCustomer
-        var registerCustomer = RegisterCustomer.build("john@doe.com", "John", "Doe");
-        var customerRegistered = Customer.register(registerCustomer);
+        RegisterCustomer registerCustomer = RegisterCustomer.build(emailAddress.value, name.givenName, name.familyName);
+        CustomerRegistered customerRegistered = Customer.register(registerCustomer);
 
         // Then CustomerRegistered
-        assertEquals(CustomerRegistered.class, customerRegistered.getClass());
+        assertNotNull(customerRegistered);
 
         //  and the payload should be as expected
-        assertTrue(registerCustomer.id.equals(customerRegistered.customerID));
-        assertTrue(registerCustomer.emailAddress.equals(customerRegistered.emailAddress));
-        assertTrue(registerCustomer.confirmationHash.equals(customerRegistered.confirmationHash));
-        assertTrue(registerCustomer.name.equals(customerRegistered.name));
+        assertTrue(customerRegistered.customerID.equals(registerCustomer.customerID));
+        assertTrue(customerRegistered.emailAddress.equals(registerCustomer.emailAddress));
+        assertTrue(customerRegistered.confirmationHash.equals(registerCustomer.confirmationHash));
+        assertTrue(customerRegistered.name.equals(registerCustomer.name));
     }
 
     @Test
     public void ConfirmEmailAddress() {
-        var customerID = ID.generate();
-        var emailAddress = EmailAddress.build("john@doe.com");
-        var confirmationHash = Hash.generate();
-        var name = PersonName.build("John", "Doe");
-
         // Given CustomerRegistered
-        var customer = Customer.reconstitute(
+        Customer customer = Customer.reconstitute(
             List.of(
                 CustomerRegistered.build(customerID, emailAddress, confirmationHash, name)
             )
         );
 
         // When ConfirmCustomerEmailAddress
-        var confirmCustomerEmailAddress = ConfirmCustomerEmailAddress.build(customerID, confirmationHash);
-        var recordedEvents = customer.confirmEmailAddress(confirmCustomerEmailAddress);
+        ConfirmCustomerEmailAddress command = ConfirmCustomerEmailAddress.build(customerID.value, confirmationHash.value);
+        List<Event> recordedEvents = customer.confirmEmailAddress(command);
 
         // Then CustomerEmailAddressConfirmed
         assertEquals(1, recordedEvents.size());
         assertEquals(CustomerEmailAddressConfirmed.class, recordedEvents.get(0).getClass());
+        assertNotNull(recordedEvents.get(0).getClass());
 
         //  and the payload should be as expected
-        var customerRegistered = (CustomerEmailAddressConfirmed) recordedEvents.get(0);
-        assertTrue(customerID.equals(customerRegistered.customerID));
+        CustomerEmailAddressConfirmed event = (CustomerEmailAddressConfirmed) recordedEvents.get(0);
+        assertTrue(event.customerID.equals(command.customerID));
     }
 
     @Test
     public void ConfirmEmailAddress_withWrongConfirmationHash() {
-        var customerID = ID.generate();
-        var emailAddress = EmailAddress.build("john@doe.com");
-        var confirmationHash = Hash.generate();
-        var name = PersonName.build("John", "Doe");
-
         // Given CustomerRegistered
-        var customer = Customer.reconstitute(
+        Customer customer = Customer.reconstitute(
             List.of(
                 CustomerRegistered.build(customerID, emailAddress, confirmationHash, name)
             )
         );
 
         // When ConfirmCustomerEmailAddress (with wrong confirmationHash)
-        var wrongConfirmationHash = Hash.generate();
-        var confirmCustomerEmailAddress = ConfirmCustomerEmailAddress.build(customerID, wrongConfirmationHash);
-        var recordedEvents = customer.confirmEmailAddress(confirmCustomerEmailAddress);
+        ConfirmCustomerEmailAddress command = ConfirmCustomerEmailAddress.build(customerID.value, wrongConfirmationHash.value);
+        List<Event> recordedEvents = customer.confirmEmailAddress(command);
 
         // Then CustomerEmailAddressConfirmationFailed
         assertEquals(1, recordedEvents.size());
         assertEquals(CustomerEmailAddressConfirmationFailed.class, recordedEvents.get(0).getClass());
+        assertNotNull(recordedEvents.get(0).getClass());
 
         //  and the payload should be as expected
-        var customerEmailAddressConfirmationFailed = (CustomerEmailAddressConfirmationFailed) recordedEvents.get(0);
-        assertTrue(customerID.equals(customerEmailAddressConfirmationFailed.customerID));
+        CustomerEmailAddressConfirmationFailed event = (CustomerEmailAddressConfirmationFailed) recordedEvents.get(0);
+        assertTrue(event.customerID.equals(command.customerID));
     }
 
     @Test
     public void ConfirmEmailAddress_whenItWasAlreadyConfirmed() {
-        var customerID = ID.generate();
-        var emailAddress = EmailAddress.build("john@doe.com");
-        var confirmationHash = Hash.generate();
-        var name = PersonName.build("John", "Doe");
-
         // Given CustomerRegistered
         //   and CustomerEmailAddressConfirmed
-        var customer = Customer.reconstitute(
+        Customer customer = Customer.reconstitute(
             List.of(
                 CustomerRegistered.build(customerID, emailAddress, confirmationHash, name),
                 CustomerEmailAddressConfirmed.build(customerID)
@@ -105,8 +108,8 @@ class CustomerTest {
         );
 
         // When ConfirmCustomerEmailAddress
-        var confirmCustomerEmailAddress = ConfirmCustomerEmailAddress.build(customerID, confirmationHash);
-        var recordedEvents = customer.confirmEmailAddress(confirmCustomerEmailAddress);
+        ConfirmCustomerEmailAddress command = ConfirmCustomerEmailAddress.build(customerID.value, confirmationHash.value);
+        List<Event> recordedEvents = customer.confirmEmailAddress(command);
 
         // Then no event
         assertEquals(0, recordedEvents.size());
@@ -114,14 +117,9 @@ class CustomerTest {
 
     @Test
     public void ConfirmEmailAddress_withWrongConfirmationHash_whenItWasAlreadyConfirmed() {
-        var customerID = ID.generate();
-        var emailAddress = EmailAddress.build("john@doe.com");
-        var confirmationHash = Hash.generate();
-        var name = PersonName.build("John", "Doe");
-
         // Given CustomerRegistered
         //   and CustomerEmailAddressConfirmed
-        var customer = Customer.reconstitute(
+        Customer customer = Customer.reconstitute(
             List.of(
                 CustomerRegistered.build(customerID, emailAddress, confirmationHash, name),
                 CustomerEmailAddressConfirmed.build(customerID)
@@ -129,67 +127,56 @@ class CustomerTest {
         );
 
         // When ConfirmCustomerEmailAddress (with wrong confirmationHash)
-        var wrongConfirmationHash = Hash.generate();
-        var confirmCustomerEmailAddress = ConfirmCustomerEmailAddress.build(customerID, wrongConfirmationHash);
-        var recordedEvents = customer.confirmEmailAddress(confirmCustomerEmailAddress);
+        ConfirmCustomerEmailAddress command = ConfirmCustomerEmailAddress.build(customerID.value, wrongConfirmationHash.value);
+        List<Event> recordedEvents = customer.confirmEmailAddress(command);
 
         // Then CustomerEmailAddressConfirmationFailed
         assertEquals(1, recordedEvents.size());
         assertEquals(CustomerEmailAddressConfirmationFailed.class, recordedEvents.get(0).getClass());
+        assertNotNull(recordedEvents.get(0).getClass());
 
         //  and the payload should be as expected
-        var customerEmailAddressConfirmationFailed = (CustomerEmailAddressConfirmationFailed) recordedEvents.get(0);
-        assertTrue(customerID.equals(customerEmailAddressConfirmationFailed.customerID));
+        CustomerEmailAddressConfirmationFailed event = (CustomerEmailAddressConfirmationFailed) recordedEvents.get(0);
+        assertTrue(event.customerID.equals(command.customerID));
     }
 
     @Test
     public void ChangeCustomerEmailAddress() {
-        var customerID = ID.generate();
-        var emailAddress = EmailAddress.build("john@doe.com");
-        var confirmationHash = Hash.generate();
-        var name = PersonName.build("John", "Doe");
-        var changedEmailAddress = EmailAddress.build("john+changed@doe.com");
-        var changedConfirmationHash = Hash.generate();
-
         // Given CustomerRegistered
-        var customer = Customer.reconstitute(
+        Customer customer = Customer.reconstitute(
                 List.of(
                         CustomerRegistered.build(customerID, emailAddress, confirmationHash, name)
                 )
         );
 
         // When ChangeCustomerEmailAddress
-        var changeCustomerEmailAddress = ChangeCustomerEmailAddress.build(customerID, changedEmailAddress, changedConfirmationHash);
-        var recordedEvents = customer.changeEmailAddress(changeCustomerEmailAddress);
+        ChangeCustomerEmailAddress command = ChangeCustomerEmailAddress.build(customerID.value, changedEmailAddress.value);
+        List<Event> recordedEvents = customer.changeEmailAddress(command);
 
         // Then CustomerEmailAddressChanged
         assertEquals(1, recordedEvents.size());
         assertEquals(CustomerEmailAddressChanged.class, recordedEvents.get(0).getClass());
+        assertNotNull(recordedEvents.get(0).getClass());
 
         //  and the payload should be as expected
-        var customerEmailAddressChanged = (CustomerEmailAddressChanged) recordedEvents.get(0);
-        assertTrue(customerID.equals(customerEmailAddressChanged.customerID));
-        assertTrue(changedEmailAddress.equals(customerEmailAddressChanged.emailAddress));
-        assertTrue(changedConfirmationHash.equals(customerEmailAddressChanged.confirmationHash));
+        CustomerEmailAddressChanged event = (CustomerEmailAddressChanged) recordedEvents.get(0);
+        assertTrue(event.customerID.equals(command.customerID));
+        assertTrue(event.emailAddress.equals(command.emailAddress));
+        assertTrue(event.confirmationHash.equals(command.confirmationHash));
     }
 
     @Test
     public void ChangeCustomerEmailAddress_withUnchangedEmailAddress() {
-        var customerID = ID.generate();
-        var emailAddress = EmailAddress.build("john@doe.com");
-        var confirmationHash = Hash.generate();
-        var name = PersonName.build("John", "Doe");
-
         // Given CustomerRegistered
-        var customer = Customer.reconstitute(
+        Customer customer = Customer.reconstitute(
                 List.of(
                         CustomerRegistered.build(customerID, emailAddress, confirmationHash, name)
                 )
         );
 
         // When ChangeCustomerEmailAddress
-        var changeCustomerEmailAddress = ChangeCustomerEmailAddress.build(customerID, emailAddress, confirmationHash);
-        var recordedEvents = customer.changeEmailAddress(changeCustomerEmailAddress);
+        ChangeCustomerEmailAddress command = ChangeCustomerEmailAddress.build(customerID.value, emailAddress.value);
+        List<Event> recordedEvents = customer.changeEmailAddress(command);
 
         // Then no event
         assertEquals(0, recordedEvents.size());
@@ -197,15 +184,8 @@ class CustomerTest {
 
     @Test
     public void ChangeCustomerEmailAddress_whenItWasAlreadyChanged() {
-        var customerID = ID.generate();
-        var emailAddress = EmailAddress.build("john@doe.com");
-        var confirmationHash = Hash.generate();
-        var name = PersonName.build("John", "Doe");
-        var changedEmailAddress = EmailAddress.build("john+changed@doe.com");
-        var changedConfirmationHash = Hash.generate();
-
         // Given CustomerRegistered
-        var customer = Customer.reconstitute(
+        Customer customer = Customer.reconstitute(
                 List.of(
                         CustomerRegistered.build(customerID, emailAddress, confirmationHash, name),
                         CustomerEmailAddressChanged.build(customerID, changedEmailAddress, changedConfirmationHash)
@@ -213,24 +193,17 @@ class CustomerTest {
         );
 
         // When ChangeCustomerEmailAddress
-        var changeCustomerEmailAddress = ChangeCustomerEmailAddress.build(customerID, changedEmailAddress, changedConfirmationHash);
-        var recordedEvents = customer.changeEmailAddress(changeCustomerEmailAddress);
+        ChangeCustomerEmailAddress command = ChangeCustomerEmailAddress.build(customerID.value, changedEmailAddress.value);
+        List<Event> recordedEvents = customer.changeEmailAddress(command);
 
         // Then no event
         assertEquals(0, recordedEvents.size());
     }
 
     @Test
-    public void ConfirmCustomerEmailAddress_whenItWasChanged() {
-        var customerID = ID.generate();
-        var emailAddress = EmailAddress.build("john@doe.com");
-        var confirmationHash = Hash.generate();
-        var name = PersonName.build("John", "Doe");
-        var changedEmailAddress = EmailAddress.build("john+changed@doe.com");
-        var changedConfirmationHash = Hash.generate();
-
+    public void ConfirmCustomerEmailAddress_whenItWasPreviouslyConfirmedAndThenChanged() {
         // Given CustomerRegistered
-        var customer = Customer.reconstitute(
+        Customer customer = Customer.reconstitute(
                 List.of(
                         CustomerRegistered.build(customerID, emailAddress, confirmationHash, name),
                         CustomerEmailAddressConfirmed.build(customerID),
@@ -239,11 +212,16 @@ class CustomerTest {
         );
 
         // When ConfirmCustomerEmailAddress
-        var confirmCustomerEmailAddress = ConfirmCustomerEmailAddress.build(customerID, changedConfirmationHash);
-        var recordedEvents = customer.confirmEmailAddress(confirmCustomerEmailAddress);
+        ConfirmCustomerEmailAddress command = ConfirmCustomerEmailAddress.build(customerID.value, changedConfirmationHash.value);
+        List<Event> recordedEvents = customer.confirmEmailAddress(command);
 
         // Then CustomerEmailAddressConfirmed
         assertEquals(1, recordedEvents.size());
         assertEquals(CustomerEmailAddressConfirmed.class, recordedEvents.get(0).getClass());
+        assertNotNull(recordedEvents.get(0).getClass());
+
+        //  and the payload should be as expected
+        CustomerEmailAddressConfirmed event = (CustomerEmailAddressConfirmed) recordedEvents.get(0);
+        assertTrue(event.customerID.equals(command.customerID));
     }
 }

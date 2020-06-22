@@ -19,7 +19,7 @@ public final class Customer {
 
     public static CustomerRegistered register(RegisterCustomer command) {
         return CustomerRegistered.build(
-                command.id,
+                command.customerID,
                 command.emailAddress,
                 command.confirmationHash,
                 command.name

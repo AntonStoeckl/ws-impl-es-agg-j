@@ -6,13 +6,13 @@ import customer.value.ID;
 import customer.value.PersonName;
 
 public final class RegisterCustomer {
-    public final ID id;
+    public final ID customerID;
     public final EmailAddress emailAddress;
     public final Hash confirmationHash;
     public final PersonName name;
 
     private RegisterCustomer(String emailAddress, String givenName, String familyName) {
-        this.id = ID.generate();
+        this.customerID = ID.generate();
         this.confirmationHash = Hash.generate();
         this.emailAddress = EmailAddress.build(emailAddress);
         this.name = PersonName.build(givenName, familyName);

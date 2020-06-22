@@ -13,6 +13,10 @@ public final class ID {
         return new ID(UUID.randomUUID().toString());
     }
 
+    public static ID build(String id) {
+        return new ID(id);
+    }
+
     public boolean equals(ID other) {
         return this.value.equals(other.value);
     }
