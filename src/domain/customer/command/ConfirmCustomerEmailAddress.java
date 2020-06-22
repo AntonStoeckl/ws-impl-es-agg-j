@@ -1,7 +1,6 @@
-package customer.command;
+package domain.customer.command;
 
-import customer.value.Hash;
-import customer.value.ID;
+import domain.customer.value.*;
 
 public final class ConfirmCustomerEmailAddress {
     public final ID customerID;

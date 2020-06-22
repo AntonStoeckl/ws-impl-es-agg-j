@@ -1,6 +1,6 @@
-package customer.event;
+package domain.customer.event;
 
-import customer.value.ID;
+import domain.customer.value.ID;
 
 public final class CustomerEmailAddressConfirmed implements Event {
     public final ID customerID;

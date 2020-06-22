@@ -1,8 +1,6 @@
-package customer.command;
+package domain.customer.command;
 
-import customer.value.EmailAddress;
-import customer.value.Hash;
-import customer.value.ID;
+import domain.customer.value.*;
 
 public final class ChangeCustomerEmailAddress {
     public final ID customerID;

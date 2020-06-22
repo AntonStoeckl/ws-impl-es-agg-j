@@ -1,4 +1,4 @@
-package customer.value;
+package domain.customer.value;
 
 import java.util.UUID;
 

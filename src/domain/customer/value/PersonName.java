@@ -1,4 +1,4 @@
-package customer.value;
+package domain.customer.value;
 
 public final class PersonName {
     public final String givenName;

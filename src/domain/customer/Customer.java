@@ -1,11 +1,13 @@
-package customer;
+package domain.customer;
 
-import customer.command.ChangeCustomerEmailAddress;
-import customer.command.ConfirmCustomerEmailAddress;
-import customer.command.RegisterCustomer;
-import customer.event.*;
-import customer.value.EmailAddress;
-import customer.value.Hash;
+import domain.customer.command.ChangeCustomerEmailAddress;
+import domain.customer.command.ChangeCustomerName;
+import domain.customer.command.ConfirmCustomerEmailAddress;
+import domain.customer.command.RegisterCustomer;
+import domain.customer.event.*;
+import domain.customer.value.EmailAddress;
+import domain.customer.value.Hash;
+import domain.customer.value.PersonName;
 
 import java.util.List;
 
@@ -13,6 +15,7 @@ public final class Customer {
     private EmailAddress emailAddress;
     private Hash confirmationHash;
     private boolean isEmailAddressConfirmed;
+    private PersonName name;
 
     private Customer() {
     }
@@ -60,16 +63,31 @@ public final class Customer {
         );
     }
 
+    public List<Event> changeName(ChangeCustomerName command) {
+        if (command.name.equals(name)) {
+            return List.of();
+        }
+
+        return List.of(
+                CustomerNameChanged.build(
+                        command.customerID, command.name
+                )
+        );
+    }
+
     private void apply(Event event) {
         if (event.getClass() == CustomerRegistered.class) {
             emailAddress = ((CustomerRegistered) event).emailAddress;
             confirmationHash = ((CustomerRegistered) event).confirmationHash;
+            name = ((CustomerRegistered) event).name;
         } else if (event.getClass() == CustomerEmailAddressConfirmed.class) {
             isEmailAddressConfirmed = true;
         } else if (event.getClass() == CustomerEmailAddressChanged.class) {
             emailAddress = ((CustomerEmailAddressChanged) event).emailAddress;
             confirmationHash = ((CustomerEmailAddressChanged) event).confirmationHash;
             isEmailAddressConfirmed = false;
+        } else if (event.getClass() == CustomerNameChanged.class) {
+            name = ((CustomerNameChanged) event).name;
         }
     }
 }

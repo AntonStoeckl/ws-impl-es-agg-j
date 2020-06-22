@@ -1,4 +1,4 @@
-package customer.value;
+package domain.customer.value;
 
 public final class EmailAddress {
     public final String value;

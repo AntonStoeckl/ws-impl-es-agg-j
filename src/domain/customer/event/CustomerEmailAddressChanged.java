@@ -1,8 +1,8 @@
-package customer.event;
+package domain.customer.event;
 
-import customer.value.EmailAddress;
-import customer.value.Hash;
-import customer.value.ID;
+import domain.customer.value.EmailAddress;
+import domain.customer.value.Hash;
+import domain.customer.value.ID;
 
 public final class CustomerEmailAddressChanged implements Event {
     public final ID customerID;
