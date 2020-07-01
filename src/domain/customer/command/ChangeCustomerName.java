@@ -1,6 +1,7 @@
 package domain.customer.command;
 
-import domain.customer.value.*;
+import domain.customer.value.ID;
+import domain.customer.value.PersonName;
 
 public class ChangeCustomerName {
     public final ID customerID;

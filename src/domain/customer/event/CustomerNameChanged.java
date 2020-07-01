@@ -1,6 +1,7 @@
 package domain.customer.event;
 
-import domain.customer.value.*;
+import domain.customer.value.ID;
+import domain.customer.value.PersonName;
 
 public class CustomerNameChanged implements Event {
     public final ID customerID;

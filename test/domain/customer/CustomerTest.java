@@ -1,10 +1,17 @@
 package domain.customer;
 
-import domain.customer.command.*;
+import domain.customer.command.ChangeCustomerEmailAddress;
+import domain.customer.command.ChangeCustomerName;
+import domain.customer.command.ConfirmCustomerEmailAddress;
+import domain.customer.command.RegisterCustomer;
 import domain.customer.event.*;
-import domain.customer.value.*;
+import domain.customer.value.EmailAddress;
+import domain.customer.value.Hash;
+import domain.customer.value.ID;
+import domain.customer.value.PersonName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,8 +1,8 @@
 package domain.customer.event;
 
+import domain.customer.value.ID;
 import domain.customer.value.EmailAddress;
 import domain.customer.value.Hash;
-import domain.customer.value.ID;
 import domain.customer.value.PersonName;
 
 public final class CustomerRegistered implements Event {

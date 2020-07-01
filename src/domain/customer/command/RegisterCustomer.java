@@ -1,6 +1,9 @@
 package domain.customer.command;
 
-import domain.customer.value.*;
+import domain.customer.value.ID;
+import domain.customer.value.EmailAddress;
+import domain.customer.value.Hash;
+import domain.customer.value.PersonName;
 
 public final class RegisterCustomer {
     public final ID customerID;
