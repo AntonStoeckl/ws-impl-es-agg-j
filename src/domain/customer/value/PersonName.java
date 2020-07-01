@@ -14,8 +14,8 @@ public final class PersonName {
     }
 
     public boolean equals(PersonName other) {
-        if (!this.givenName.equals(other.givenName)) return false;
+        if (!givenName.equals(other.givenName)) return false;
 
-        return this.familyName.equals(other.familyName);
+        return familyName.equals(other.familyName);
     }
 }

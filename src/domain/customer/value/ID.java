@@ -18,6 +18,6 @@ public final class ID {
     }
 
     public boolean equals(ID other) {
-        return this.value.equals(other.value);
+        return value.equals(other.value);
     }
 }
