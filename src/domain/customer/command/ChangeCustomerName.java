@@ -3,7 +3,7 @@ package domain.customer.command;
 import domain.customer.value.ID;
 import domain.customer.value.PersonName;
 
-public class ChangeCustomerName {
+public final class ChangeCustomerName {
     public final ID customerID;
     public final PersonName name;
 

@@ -3,7 +3,7 @@ package domain.customer.event;
 import domain.customer.value.ID;
 import domain.customer.value.PersonName;
 
-public class CustomerNameChanged implements Event {
+public final class CustomerNameChanged implements Event {
     public final ID customerID;
     public final PersonName name;
 
