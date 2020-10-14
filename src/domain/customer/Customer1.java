@@ -11,13 +11,19 @@ import domain.customer.value.PersonName;
 
 import java.util.List;
 
-public final class Customer {
+/*
+ This version of a Customer Aggregate is Event-Sourced and each behavior directly returns the events that happened.
+
+ Enable the disabled test cases (remove the @Disabled annotation) in Customer1Test one by one and make them all green!
+ The first test case (RegisterCustomer) is already enabled for you to start.
+ */
+public final class Customer1 {
     private EmailAddress emailAddress;
     private Hash confirmationHash;
     private boolean isEmailAddressConfirmed;
     private PersonName name;
 
-    private Customer() {
+    private Customer1() {
     }
 
     public static CustomerRegistered register(RegisterCustomer command) {
@@ -29,8 +35,8 @@ public final class Customer {
         );
     }
 
-    public static Customer reconstitute(List<Event> events) {
-        var customer = new Customer();
+    public static Customer1 reconstitute(List<Event> events) {
+        var customer = new Customer1();
 
         for (Event event: events) {
             customer.apply(event);

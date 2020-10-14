@@ -16,7 +16,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CustomerTest {
+class Customer2Test {
     private ID customerID;
     private EmailAddress emailAddress;
     private EmailAddress changedEmailAddress;
@@ -42,12 +42,16 @@ class CustomerTest {
     public void RegisterCustomer() {
         // When RegisterCustomer
         RegisterCustomer registerCustomer = RegisterCustomer.build(emailAddress.value, name.givenName, name.familyName);
-        CustomerRegistered customerRegistered = Customer.register(registerCustomer);
+        Customer2 customer = Customer2.register(registerCustomer);
 
         // Then CustomerRegistered
-        assertNotNull(customerRegistered);
+        List<Event> recordedEvents = customer.getRecordedEvents();
+        assertEquals(1, recordedEvents.size());
+        assertEquals(CustomerRegistered.class, recordedEvents.get(0).getClass());
+        assertNotNull(recordedEvents.get(0).getClass());
 
         //  and the payload should be as expected
+        CustomerRegistered customerRegistered = (CustomerRegistered) recordedEvents.get(0);
         assertTrue(customerRegistered.customerID.equals(registerCustomer.customerID));
         assertTrue(customerRegistered.emailAddress.equals(registerCustomer.emailAddress));
         assertTrue(customerRegistered.confirmationHash.equals(registerCustomer.confirmationHash));
@@ -57,7 +61,7 @@ class CustomerTest {
     @Test
     public void ConfirmEmailAddress() {
         // Given CustomerRegistered
-        Customer customer = Customer.reconstitute(
+        Customer2 customer = Customer2.reconstitute(
                 List.of(
                         CustomerRegistered.build(customerID, emailAddress, confirmationHash, name)
                 )
@@ -80,7 +84,7 @@ class CustomerTest {
     @Test
     public void ConfirmEmailAddress_withWrongConfirmationHash() {
         // Given CustomerRegistered
-        Customer customer = Customer.reconstitute(
+        Customer2 customer = Customer2.reconstitute(
                 List.of(
                         CustomerRegistered.build(customerID, emailAddress, confirmationHash, name)
                 )
@@ -104,7 +108,7 @@ class CustomerTest {
     public void ConfirmEmailAddress_whenItWasAlreadyConfirmed() {
         // Given CustomerRegistered
         //   and CustomerEmailAddressConfirmed
-        Customer customer = Customer.reconstitute(
+        Customer2 customer = Customer2.reconstitute(
                 List.of(
                         CustomerRegistered.build(customerID, emailAddress, confirmationHash, name),
                         CustomerEmailAddressConfirmed.build(customerID)
@@ -123,7 +127,7 @@ class CustomerTest {
     public void ConfirmEmailAddress_withWrongConfirmationHash_whenItWasAlreadyConfirmed() {
         // Given CustomerRegistered
         //   and CustomerEmailAddressConfirmed
-        Customer customer = Customer.reconstitute(
+        Customer2 customer = Customer2.reconstitute(
                 List.of(
                         CustomerRegistered.build(customerID, emailAddress, confirmationHash, name),
                         CustomerEmailAddressConfirmed.build(customerID)
@@ -147,7 +151,7 @@ class CustomerTest {
     @Test
     public void ChangeCustomerEmailAddress() {
         // Given CustomerRegistered
-        Customer customer = Customer.reconstitute(
+        Customer2 customer = Customer2.reconstitute(
                 List.of(
                         CustomerRegistered.build(customerID, emailAddress, confirmationHash, name)
                 )
@@ -172,7 +176,7 @@ class CustomerTest {
     @Test
     public void ChangeCustomerEmailAddress_withUnchangedEmailAddress() {
         // Given CustomerRegistered
-        Customer customer = Customer.reconstitute(
+        Customer2 customer = Customer2.reconstitute(
                 List.of(
                         CustomerRegistered.build(customerID, emailAddress, confirmationHash, name)
                 )
@@ -190,7 +194,7 @@ class CustomerTest {
     public void ChangeCustomerEmailAddress_whenItWasAlreadyChanged() {
         // Given CustomerRegistered
         //   and CustomerEmailAddressChanged
-        Customer customer = Customer.reconstitute(
+        Customer2 customer = Customer2.reconstitute(
                 List.of(
                         CustomerRegistered.build(customerID, emailAddress, confirmationHash, name),
                         CustomerEmailAddressChanged.build(customerID, changedEmailAddress, changedConfirmationHash)
@@ -210,7 +214,7 @@ class CustomerTest {
         // Given CustomerRegistered
         //   and CustomerEmailAddressConfirmed
         //   and CustomerEmailAddressChanged
-        Customer customer = Customer.reconstitute(
+        Customer2 customer = Customer2.reconstitute(
                 List.of(
                         CustomerRegistered.build(customerID, emailAddress, confirmationHash, name),
                         CustomerEmailAddressConfirmed.build(customerID),
@@ -235,7 +239,7 @@ class CustomerTest {
     @Test
     public void ChangeCustomerName() {
         // Given CustomerRegistered
-        Customer customer = Customer.reconstitute(
+        Customer2 customer = Customer2.reconstitute(
                 List.of(
                         CustomerRegistered.build(customerID, emailAddress, confirmationHash, name)
                 )
@@ -259,7 +263,7 @@ class CustomerTest {
     @Test
     public void ChangeCustomerName_withUnchangedName() {
         // Given CustomerRegistered
-        Customer customer = Customer.reconstitute(
+        Customer2 customer = Customer2.reconstitute(
                 List.of(
                         CustomerRegistered.build(customerID, emailAddress, confirmationHash, name)
                 )
@@ -277,7 +281,7 @@ class CustomerTest {
     public void ChangeCustomerName_whenItWasAlreadyChanged() {
         // Given CustomerRegistered
         //   and CustomerNameChanged
-        Customer customer = Customer.reconstitute(
+        Customer2 customer = Customer2.reconstitute(
                 List.of(
                         CustomerRegistered.build(customerID, emailAddress, confirmationHash, name),
                         CustomerNameChanged.build(customerID, changedName)
