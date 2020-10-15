@@ -69,9 +69,10 @@ class Customer2Test {
 
         // When ConfirmCustomerEmailAddress
         ConfirmCustomerEmailAddress command = ConfirmCustomerEmailAddress.build(customerID.value, confirmationHash.value);
-        List<Event> recordedEvents = customer.confirmEmailAddress(command);
+        customer.confirmEmailAddress(command);
 
         // Then CustomerEmailAddressConfirmed
+        List<Event> recordedEvents = customer.getRecordedEvents();
         assertEquals(1, recordedEvents.size());
         assertEquals(CustomerEmailAddressConfirmed.class, recordedEvents.get(0).getClass());
         assertNotNull(recordedEvents.get(0).getClass());
@@ -92,9 +93,10 @@ class Customer2Test {
 
         // When ConfirmCustomerEmailAddress (with wrong confirmationHash)
         ConfirmCustomerEmailAddress command = ConfirmCustomerEmailAddress.build(customerID.value, wrongConfirmationHash.value);
-        List<Event> recordedEvents = customer.confirmEmailAddress(command);
+        customer.confirmEmailAddress(command);
 
         // Then CustomerEmailAddressConfirmationFailed
+        List<Event> recordedEvents = customer.getRecordedEvents();
         assertEquals(1, recordedEvents.size());
         assertEquals(CustomerEmailAddressConfirmationFailed.class, recordedEvents.get(0).getClass());
         assertNotNull(recordedEvents.get(0).getClass());
@@ -117,9 +119,10 @@ class Customer2Test {
 
         // When ConfirmCustomerEmailAddress
         ConfirmCustomerEmailAddress command = ConfirmCustomerEmailAddress.build(customerID.value, confirmationHash.value);
-        List<Event> recordedEvents = customer.confirmEmailAddress(command);
+        customer.confirmEmailAddress(command);
 
         // Then no event
+        List<Event> recordedEvents = customer.getRecordedEvents();
         assertEquals(0, recordedEvents.size());
     }
 
@@ -136,9 +139,10 @@ class Customer2Test {
 
         // When ConfirmCustomerEmailAddress (with wrong confirmationHash)
         ConfirmCustomerEmailAddress command = ConfirmCustomerEmailAddress.build(customerID.value, wrongConfirmationHash.value);
-        List<Event> recordedEvents = customer.confirmEmailAddress(command);
+        customer.confirmEmailAddress(command);
 
         // Then CustomerEmailAddressConfirmationFailed
+        List<Event> recordedEvents = customer.getRecordedEvents();
         assertEquals(1, recordedEvents.size());
         assertEquals(CustomerEmailAddressConfirmationFailed.class, recordedEvents.get(0).getClass());
         assertNotNull(recordedEvents.get(0).getClass());
@@ -159,9 +163,10 @@ class Customer2Test {
 
         // When ChangeCustomerEmailAddress
         ChangeCustomerEmailAddress command = ChangeCustomerEmailAddress.build(customerID.value, changedEmailAddress.value);
-        List<Event> recordedEvents = customer.changeEmailAddress(command);
+        customer.changeEmailAddress(command);
 
         // Then CustomerEmailAddressChanged
+        List<Event> recordedEvents = customer.getRecordedEvents();
         assertEquals(1, recordedEvents.size());
         assertEquals(CustomerEmailAddressChanged.class, recordedEvents.get(0).getClass());
         assertNotNull(recordedEvents.get(0).getClass());
@@ -184,9 +189,10 @@ class Customer2Test {
 
         // When ChangeCustomerEmailAddress
         ChangeCustomerEmailAddress command = ChangeCustomerEmailAddress.build(customerID.value, emailAddress.value);
-        List<Event> recordedEvents = customer.changeEmailAddress(command);
+        customer.changeEmailAddress(command);
 
         // Then no event
+        List<Event> recordedEvents = customer.getRecordedEvents();
         assertEquals(0, recordedEvents.size());
     }
 
@@ -203,9 +209,10 @@ class Customer2Test {
 
         // When ChangeCustomerEmailAddress
         ChangeCustomerEmailAddress command = ChangeCustomerEmailAddress.build(customerID.value, changedEmailAddress.value);
-        List<Event> recordedEvents = customer.changeEmailAddress(command);
+        customer.changeEmailAddress(command);
 
         // Then no event
+        List<Event> recordedEvents = customer.getRecordedEvents();
         assertEquals(0, recordedEvents.size());
     }
 
@@ -224,9 +231,10 @@ class Customer2Test {
 
         // When ConfirmCustomerEmailAddress
         ConfirmCustomerEmailAddress command = ConfirmCustomerEmailAddress.build(customerID.value, changedConfirmationHash.value);
-        List<Event> recordedEvents = customer.confirmEmailAddress(command);
+        customer.confirmEmailAddress(command);
 
         // Then CustomerEmailAddressConfirmed
+        List<Event> recordedEvents = customer.getRecordedEvents();
         assertEquals(1, recordedEvents.size());
         assertEquals(CustomerEmailAddressConfirmed.class, recordedEvents.get(0).getClass());
         assertNotNull(recordedEvents.get(0).getClass());
@@ -247,9 +255,10 @@ class Customer2Test {
 
         // When ChangeCustomerName
         ChangeCustomerName command = ChangeCustomerName.build(customerID, changedName);
-        List<Event> recordedEvents = customer.changeName(command);
+        customer.changeName(command);
 
         // Then CustomerNameChanged
+        List<Event> recordedEvents = customer.getRecordedEvents();
         assertEquals(1, recordedEvents.size());
         assertEquals(CustomerNameChanged.class, recordedEvents.get(0).getClass());
         assertNotNull(recordedEvents.get(0).getClass());
@@ -271,9 +280,10 @@ class Customer2Test {
 
         // When ChangeCustomerName
         ChangeCustomerName command = ChangeCustomerName.build(customerID, name);
-        List<Event> recordedEvents = customer.changeName(command);
+        customer.changeName(command);
 
         // Then no event
+        List<Event> recordedEvents = customer.getRecordedEvents();
         assertEquals(0, recordedEvents.size());
     }
 
@@ -290,9 +300,10 @@ class Customer2Test {
 
         // When ChangeCustomerName
         ChangeCustomerName command = ChangeCustomerName.build(customerID, changedName);
-        List<Event> recordedEvents = customer.changeName(command);
+        customer.changeName(command);
 
         // Then no event
+        List<Event> recordedEvents = customer.getRecordedEvents();
         assertEquals(0, recordedEvents.size());
     }
 }

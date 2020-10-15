@@ -13,10 +13,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /*
- This version of a Customer Aggregate is Event-Sourced and each behavior directly returns the events that happened.
+ This version of a Customer Aggregate is Event-Sourced and records events that have happened, the client has to request those recorde events.
 
- Enable the disabled test cases (remove the @Disabled annotation) in Customer1Test one by one and make them all green!
+ Enable the disabled test cases (remove the @Disabled annotation) in Customer2Test one by one and make them all green!
  The first test case (RegisterCustomer) is already enabled for you to start.
+
+ Bonus challenge:
+    What needs to be changed so that the Aggregate keeps it's own state up-to-date, e.g. to be able to handle multiple
+    Commands within one request from the outside?
+    Hint: You can test for idempotency directly, in the scope of test cases.
  */
 public final class Customer2 {
     private EmailAddress emailAddress;
@@ -24,7 +29,7 @@ public final class Customer2 {
     private boolean isEmailAddressConfirmed;
     private PersonName name;
 
-    private List<Event> recordedEvents;
+    private final List<Event> recordedEvents;
 
     private Customer2() {
         recordedEvents = new ArrayList<>();
@@ -34,12 +39,7 @@ public final class Customer2 {
         var customer = new Customer2();
 
         customer.recordThat(
-                CustomerRegistered.build(
-                        command.customerID,
-                        command.emailAddress,
-                        command.confirmationHash,
-                        command.name
-                )
+                CustomerRegistered.build(command.customerID, command.emailAddress, command.confirmationHash, command.name)
         );
 
         return customer;
@@ -57,9 +57,7 @@ public final class Customer2 {
     public static Customer2 reconstitute(List<Event> events) {
         var customer = new Customer2();
 
-        for (Event event: events) {
-            customer.apply(event);
-        }
+        customer.apply(events);
 
         return customer;
     }
@@ -69,12 +67,13 @@ public final class Customer2 {
             recordThat(
                     CustomerEmailAddressConfirmationFailed.build(command.customerID)
             );
+
+            return;
         }
 
         if (!isEmailAddressConfirmed) {
             recordThat(
-                    CustomerEmailAddressConfirmed.build(command.customerID
-                    )
+                    CustomerEmailAddressConfirmed.build(command.customerID)
             );
         }
     }
@@ -82,9 +81,7 @@ public final class Customer2 {
     public void changeEmailAddress(ChangeCustomerEmailAddress command) {
         if (!command.emailAddress.equals(emailAddress)) {
             recordThat(
-                    CustomerEmailAddressChanged.build(
-                            command.customerID, command.emailAddress, command.confirmationHash
-                    )
+                    CustomerEmailAddressChanged.build(command.customerID, command.emailAddress, command.confirmationHash)
             );
         }
     }
@@ -92,10 +89,14 @@ public final class Customer2 {
     public void changeName(ChangeCustomerName command) {
         if (!command.name.equals(name)) {
             recordThat(
-                    CustomerNameChanged.build(
-                            command.customerID, command.name
-                    )
+                    CustomerNameChanged.build(command.customerID, command.name)
             );
+        }
+    }
+
+    private void apply(List<Event> events) {
+        for (Event event: events) {
+            apply(event);
         }
     }
 
