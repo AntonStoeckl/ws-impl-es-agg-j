@@ -38,9 +38,7 @@ public final class Customer1 {
     public static Customer1 reconstitute(List<Event> events) {
         var customer = new Customer1();
 
-        for (Event event: events) {
-            customer.apply(event);
-        }
+        customer.apply(events);
 
         return customer;
     }
@@ -79,6 +77,12 @@ public final class Customer1 {
                         command.customerID, command.name
                 )
         );
+    }
+
+    private void apply(List<Event> events) {
+        for (Event event: events) {
+            apply(event);
+        }
     }
 
     private void apply(Event event) {
