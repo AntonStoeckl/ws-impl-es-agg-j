@@ -9,12 +9,13 @@ import domain.customer.value.EmailAddress;
 import domain.customer.value.Hash;
 import domain.customer.value.PersonName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This version of a Customer Aggregate is OOP-style, event-sourced, and directly returns the events that have happened.
+ * This version of a Customer Aggregate is OOP-style, event-sourced, and records events that have happened, the client has to request those recorded events.
  * <p>
- * Enable the disabled test cases (remove the @Disabled annotation) in Customer1Test one by one and make them all green!
+ * Enable the disabled test cases (remove the @Disabled annotation) in Customer2Test one by one and make them all green!
  * The first test case (RegisterCustomer) is already enabled for you to start.
  * <p>
  * Bonus challenge:
@@ -28,66 +29,73 @@ public final class Customer1 {
     private boolean isEmailAddressConfirmed;
     private PersonName name;
 
+    private final List<Event> recordedEvents;
+
     private Customer1() {
+        recordedEvents = new ArrayList<>();
     }
 
-    public static CustomerRegistered register(RegisterCustomer command) {
-        return CustomerRegistered.build(
-                command.customerID,
-                command.emailAddress,
-                command.confirmationHash,
-                command.name
+    public static Customer1 register(RegisterCustomer command) {
+        Customer1 customer = new Customer1();
+
+        customer.recordThat(
+                CustomerRegistered.build(command.customerID, command.emailAddress, command.confirmationHash, command.name)
         );
+
+        return customer;
     }
 
     public static Customer1 reconstitute(List<Event> events) {
-        Customer1 customer = new Customer1();
+        var customer = new Customer1();
 
         customer.apply(events);
 
         return customer;
     }
 
-    public List<Event> confirmEmailAddress(ConfirmCustomerEmailAddress command) {
+    public void confirmEmailAddress(ConfirmCustomerEmailAddress command) {
         if (!confirmationHash.equals(command.confirmationHash)) {
-            return List.of(
-                    apply(CustomerEmailAddressConfirmationFailed.build(command.customerID))
+            recordThat(
+                    CustomerEmailAddressConfirmationFailed.build(command.customerID)
+            );
+
+            return;
+        }
+
+        if (!isEmailAddressConfirmed) {
+            recordThat(
+                    CustomerEmailAddressConfirmed.build(command.customerID)
             );
         }
-
-        if (isEmailAddressConfirmed) {
-            return List.of();
-        }
-
-        return List.of(
-                apply(
-                        CustomerEmailAddressConfirmed.build(command.customerID)
-                )
-        );
     }
 
-    public List<Event> changeEmailAddress(ChangeCustomerEmailAddress command) {
-        if (command.emailAddress.equals(emailAddress)) {
-            return List.of();
+    public void changeEmailAddress(ChangeCustomerEmailAddress command) {
+        if (!command.emailAddress.equals(emailAddress)) {
+            recordThat(
+                    CustomerEmailAddressChanged.build(command.customerID, command.emailAddress, command.confirmationHash)
+            );
         }
-
-        return List.of(
-                apply(
-                        CustomerEmailAddressChanged.build(command.customerID, command.emailAddress, command.confirmationHash)
-                )
-        );
     }
 
-    public List<Event> changeName(ChangeCustomerName command) {
-        if (command.name.equals(name)) {
-            return List.of();
+    public void changeName(ChangeCustomerName command) {
+        if (!command.name.equals(name)) {
+            recordThat(
+                    CustomerNameChanged.build(command.customerID, command.name)
+            );
         }
+    }
 
-        return List.of(
-                apply(
-                        CustomerNameChanged.build(command.customerID, command.name)
-                )
-        );
+    public List<Event> getRecordedEvents() {
+        var current = new ArrayList<>(recordedEvents);
+
+        recordedEvents.clear();
+
+        return current;
+    }
+
+    private void recordThat(Event event) {
+        recordedEvents.add(event);
+        apply(event);
     }
 
     private void apply(List<Event> events) {
@@ -96,7 +104,7 @@ public final class Customer1 {
         }
     }
 
-    private Event apply(Event event) {
+    private void apply(Event event) {
         if (event.getClass() == CustomerRegistered.class) {
             emailAddress = ((CustomerRegistered) event).emailAddress;
             confirmationHash = ((CustomerRegistered) event).confirmationHash;
@@ -110,8 +118,6 @@ public final class Customer1 {
         } else if (event.getClass() == CustomerNameChanged.class) {
             name = ((CustomerNameChanged) event).name;
         }
-
-        return event;
     }
 }
 
