@@ -12,16 +12,16 @@ import domain.customer.value.PersonName;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
- This version of a Customer Aggregate is Event-Sourced and records events that have happened, the client has to request those recorde events.
-
- Enable the disabled test cases (remove the @Disabled annotation) in Customer2Test one by one and make them all green!
- The first test case (RegisterCustomer) is already enabled for you to start.
-
- Bonus challenge:
-    What needs to be changed so that the Aggregate keeps it's own state up-to-date, e.g. to be able to handle multiple
-    Commands within one request from the outside?
-    Hint: You can test for idempotency directly, in the scope of test cases.
+/**
+ * This version of a Customer Aggregate is OOP-style, event-sourced, and records events that have happened, the client has to request those recorded events.
+ * <p>
+ * Enable the disabled test cases (remove the @Disabled annotation) in Customer2Test one by one and make them all green!
+ * The first test case (RegisterCustomer) is already enabled for you to start.
+ * <p>
+ * Bonus challenge:
+ * What needs to be changed so that the Aggregate keeps it's own state up-to-date, e.g. to be able to handle multiple
+ * Commands within one request from the outside?
+ * Hint: To test this, you can extend the test cases so that they handle the same command again, resulting in "no changes".
  */
 public final class Customer2 {
     private EmailAddress emailAddress;
@@ -36,22 +36,13 @@ public final class Customer2 {
     }
 
     public static Customer2 register(RegisterCustomer command) {
-        var customer = new Customer2();
+        Customer2 customer = new Customer2();
 
         customer.recordThat(
                 CustomerRegistered.build(command.customerID, command.emailAddress, command.confirmationHash, command.name)
         );
 
         return customer;
-    }
-
-    private void recordThat(Event event) {
-        recordedEvents.add(event);
-//        apply(event);
-    }
-
-    public List<Event> getRecordedEvents() {
-        return recordedEvents;
     }
 
     public static Customer2 reconstitute(List<Event> events) {
@@ -94,8 +85,21 @@ public final class Customer2 {
         }
     }
 
+    public List<Event> getRecordedEvents() {
+        var current = new ArrayList<>(recordedEvents);
+
+        recordedEvents.clear();
+
+        return current;
+    }
+
+    private void recordThat(Event event) {
+        recordedEvents.add(event);
+        apply(event);
+    }
+
     private void apply(List<Event> events) {
-        for (Event event: events) {
+        for (Event event : events) {
             apply(event);
         }
     }

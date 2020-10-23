@@ -11,11 +11,16 @@ import domain.customer.value.PersonName;
 
 import java.util.List;
 
-/*
- This version of a Customer Aggregate is Event-Sourced and each behavior directly returns the events that happened.
-
- Enable the disabled test cases (remove the @Disabled annotation) in Customer1Test one by one and make them all green!
- The first test case (RegisterCustomer) is already enabled for you to start.
+/**
+ * This version of a Customer Aggregate is OOP-style, event-sourced, and directly returns the events that have happened.
+ * <p>
+ * Enable the disabled test cases (remove the @Disabled annotation) in Customer1Test one by one and make them all green!
+ * The first test case (RegisterCustomer) is already enabled for you to start.
+ * <p>
+ * Bonus challenge:
+ * What needs to be changed so that the Aggregate keeps it's own state up-to-date, e.g. to be able to handle multiple
+ * Commands within one request from the outside?
+ * Hint: To test this, you can extend the test cases so that they handle the same command again, resulting in "no changes".
  */
 public final class Customer1 {
     private EmailAddress emailAddress;
@@ -36,7 +41,7 @@ public final class Customer1 {
     }
 
     public static Customer1 reconstitute(List<Event> events) {
-        var customer = new Customer1();
+        Customer1 customer = new Customer1();
 
         customer.apply(events);
 
@@ -45,14 +50,20 @@ public final class Customer1 {
 
     public List<Event> confirmEmailAddress(ConfirmCustomerEmailAddress command) {
         if (!confirmationHash.equals(command.confirmationHash)) {
-            return List.of(CustomerEmailAddressConfirmationFailed.build(command.customerID));
+            return List.of(
+                    apply(CustomerEmailAddressConfirmationFailed.build(command.customerID))
+            );
         }
 
         if (isEmailAddressConfirmed) {
             return List.of();
         }
 
-        return List.of(CustomerEmailAddressConfirmed.build(command.customerID));
+        return List.of(
+                apply(
+                        CustomerEmailAddressConfirmed.build(command.customerID)
+                )
+        );
     }
 
     public List<Event> changeEmailAddress(ChangeCustomerEmailAddress command) {
@@ -61,8 +72,8 @@ public final class Customer1 {
         }
 
         return List.of(
-                CustomerEmailAddressChanged.build(
-                        command.customerID, command.emailAddress, command.confirmationHash
+                apply(
+                        CustomerEmailAddressChanged.build(command.customerID, command.emailAddress, command.confirmationHash)
                 )
         );
     }
@@ -73,19 +84,19 @@ public final class Customer1 {
         }
 
         return List.of(
-                CustomerNameChanged.build(
-                        command.customerID, command.name
+                apply(
+                        CustomerNameChanged.build(command.customerID, command.name)
                 )
         );
     }
 
     private void apply(List<Event> events) {
-        for (Event event: events) {
+        for (Event event : events) {
             apply(event);
         }
     }
 
-    private void apply(Event event) {
+    private Event apply(Event event) {
         if (event.getClass() == CustomerRegistered.class) {
             emailAddress = ((CustomerRegistered) event).emailAddress;
             confirmationHash = ((CustomerRegistered) event).confirmationHash;
@@ -99,6 +110,8 @@ public final class Customer1 {
         } else if (event.getClass() == CustomerNameChanged.class) {
             name = ((CustomerNameChanged) event).name;
         }
+
+        return event;
     }
 }
 

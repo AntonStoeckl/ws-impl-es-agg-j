@@ -39,7 +39,7 @@ class Customer1Test {
     }
 
     @Test
-    public void RegisterCustomer() {
+    public void registerCustomer() {
         // When RegisterCustomer
         RegisterCustomer registerCustomer = RegisterCustomer.build(emailAddress.value, name.givenName, name.familyName);
         CustomerRegistered customerRegistered = Customer1.register(registerCustomer);
@@ -55,7 +55,7 @@ class Customer1Test {
     }
 
     @Test
-    public void ConfirmEmailAddress() {
+    public void confirmEmailAddress() {
         // Given CustomerRegistered
         Customer1 customer = Customer1.reconstitute(
                 List.of(
@@ -75,10 +75,13 @@ class Customer1Test {
         //  and the payload should be as expected
         CustomerEmailAddressConfirmed event = (CustomerEmailAddressConfirmed) recordedEvents.get(0);
         assertTrue(event.customerID.equals(command.customerID));
+
+        // When same command is handled again, Then no event should be recorded
+        assertEquals(0, customer.confirmEmailAddress(command).size());
     }
 
     @Test
-    public void ConfirmEmailAddress_withWrongConfirmationHash() {
+    public void confirmEmailAddress_withWrongConfirmationHash() {
         // Given CustomerRegistered
         Customer1 customer = Customer1.reconstitute(
                 List.of(
@@ -101,7 +104,7 @@ class Customer1Test {
     }
 
     @Test
-    public void ConfirmEmailAddress_whenItWasAlreadyConfirmed() {
+    public void confirmEmailAddress_whenItWasAlreadyConfirmed() {
         // Given CustomerRegistered
         //   and CustomerEmailAddressConfirmed
         Customer1 customer = Customer1.reconstitute(
@@ -120,7 +123,7 @@ class Customer1Test {
     }
 
     @Test
-    public void ConfirmEmailAddress_withWrongConfirmationHash_whenItWasAlreadyConfirmed() {
+    public void confirmEmailAddress_withWrongConfirmationHash_whenItWasAlreadyConfirmed() {
         // Given CustomerRegistered
         //   and CustomerEmailAddressConfirmed
         Customer1 customer = Customer1.reconstitute(
@@ -145,7 +148,7 @@ class Customer1Test {
     }
 
     @Test
-    public void ChangeCustomerEmailAddress() {
+    public void changeCustomerEmailAddress() {
         // Given CustomerRegistered
         Customer1 customer = Customer1.reconstitute(
                 List.of(
@@ -167,10 +170,13 @@ class Customer1Test {
         assertTrue(event.customerID.equals(command.customerID));
         assertTrue(event.emailAddress.equals(command.emailAddress));
         assertTrue(event.confirmationHash.equals(command.confirmationHash));
+
+        // When same command is handled again, Then no event should be recorded
+        assertEquals(0, customer.changeEmailAddress(command).size());
     }
 
     @Test
-    public void ChangeCustomerEmailAddress_withUnchangedEmailAddress() {
+    public void changeCustomerEmailAddress_withUnchangedEmailAddress() {
         // Given CustomerRegistered
         Customer1 customer = Customer1.reconstitute(
                 List.of(
@@ -187,7 +193,7 @@ class Customer1Test {
     }
 
     @Test
-    public void ChangeCustomerEmailAddress_whenItWasAlreadyChanged() {
+    public void changeCustomerEmailAddress_whenItWasAlreadyChanged() {
         // Given CustomerRegistered
         //   and CustomerEmailAddressChanged
         Customer1 customer = Customer1.reconstitute(
@@ -206,7 +212,7 @@ class Customer1Test {
     }
 
     @Test
-    public void ConfirmCustomerEmailAddress_whenItWasPreviouslyConfirmedAndThenChanged() {
+    public void confirmCustomerEmailAddress_whenItWasPreviouslyConfirmedAndThenChanged() {
         // Given CustomerRegistered
         //   and CustomerEmailAddressConfirmed
         //   and CustomerEmailAddressChanged
@@ -230,10 +236,13 @@ class Customer1Test {
         //  and the payload should be as expected
         CustomerEmailAddressConfirmed event = (CustomerEmailAddressConfirmed) recordedEvents.get(0);
         assertTrue(event.customerID.equals(command.customerID));
+
+        // When same command is handled again, Then no event should be recorded
+        assertEquals(0, customer.confirmEmailAddress(command).size());
     }
 
     @Test
-    public void ChangeCustomerName() {
+    public void changeCustomerName() {
         // Given CustomerRegistered
         Customer1 customer = Customer1.reconstitute(
                 List.of(
@@ -254,10 +263,13 @@ class Customer1Test {
         CustomerNameChanged event = (CustomerNameChanged) recordedEvents.get(0);
         assertTrue(event.customerID.equals(command.customerID));
         assertTrue(event.name.equals(command.name));
+
+        // When same command is handled again, Then no event should be recorded
+        assertEquals(0, customer.changeName(command).size());
     }
 
     @Test
-    public void ChangeCustomerName_withUnchangedName() {
+    public void changeCustomerName_withUnchangedName() {
         // Given CustomerRegistered
         Customer1 customer = Customer1.reconstitute(
                 List.of(
@@ -274,7 +286,7 @@ class Customer1Test {
     }
 
     @Test
-    public void ChangeCustomerName_whenItWasAlreadyChanged() {
+    public void changeCustomerName_whenItWasAlreadyChanged() {
         // Given CustomerRegistered
         //   and CustomerNameChanged
         Customer1 customer = Customer1.reconstitute(
