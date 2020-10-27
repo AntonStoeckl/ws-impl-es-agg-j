@@ -7,15 +7,12 @@ public final class ChangeCustomerName {
     public final ID customerID;
     public final PersonName name;
 
-    private ChangeCustomerName(ID customerID, PersonName name) {
-        this.customerID = customerID;
-        this.name = name;
+    private ChangeCustomerName(String customerID, String givenName, String familyName) {
+        this.customerID = ID.build(customerID);
+        this.name = PersonName.build(givenName, familyName);
     }
 
     public static ChangeCustomerName build(String customerID, String givenName, String familyName) {
-        return new ChangeCustomerName(
-                ID.build(customerID),
-                PersonName.build(givenName, familyName)
-        );
+        return new ChangeCustomerName(customerID, givenName, familyName);
     }
 }
