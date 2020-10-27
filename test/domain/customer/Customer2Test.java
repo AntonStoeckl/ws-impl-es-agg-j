@@ -251,7 +251,7 @@ class Customer2Test {
         );
 
         // When ChangeCustomerName
-        ChangeCustomerName command = ChangeCustomerName.build(customerID, changedName);
+        ChangeCustomerName command = ChangeCustomerName.build(customerID.value, changedName.givenName, changedName.familyName);
         List<Event> recordedEvents = customer.changeName(command);
 
         // Then CustomerNameChanged
@@ -278,7 +278,7 @@ class Customer2Test {
         );
 
         // When ChangeCustomerName
-        ChangeCustomerName command = ChangeCustomerName.build(customerID, name);
+        ChangeCustomerName command = ChangeCustomerName.build(customerID.value, name.givenName, name.familyName);
         List<Event> recordedEvents = customer.changeName(command);
 
         // Then no event
@@ -297,7 +297,7 @@ class Customer2Test {
         );
 
         // When ChangeCustomerName
-        ChangeCustomerName command = ChangeCustomerName.build(customerID, changedName);
+        ChangeCustomerName command = ChangeCustomerName.build(customerID.value, changedName.givenName, changedName.familyName);
         List<Event> recordedEvents = customer.changeName(command);
 
         // Then no event
